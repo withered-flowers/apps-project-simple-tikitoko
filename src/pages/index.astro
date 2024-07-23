@@ -24,7 +24,21 @@ if (Astro.request.method === "POST") {
 ---
 
 <BaseLayout title="Tiki Toko Calculator">
-	<main class="p-4">
+	<main class="p-4 text-slate-700">
+		<nav class="w-full flex justify-between py-4 items-center">
+			<span>
+				<p class="font-bold text-3xl">Yuk hitung Kalori Harianmu</p>
+			</span>
+			<span>
+				<a
+					class="flex items-center gap-2 hover:bg-gray-200 p-2 rounded transition-all duration-300"
+					href="https://github.com/withered-flowers/apps-project-simple-tikitoko"
+				>
+					<img src="/github.svg" alt="Github Logo" class="w-8 h-8" />
+					<span>Github</span>
+				</a>
+			</span>
+		</nav>
 		<p class="font-semibold text-xl">Masukkan informasi kamu di sini yah:</p>
 
 		<form
@@ -80,8 +94,8 @@ if (Astro.request.method === "POST") {
 		{
 			response && typeof response.body === "object" && (
 				<>
-					<p class="font-semibold text-xl">Data yang kamu masukkan:</p>
-					<section class="mt-4 grid grid-cols-2 gap-4">
+					<p class="mt-4 font-semibold text-xl">Data yang kamu masukkan:</p>
+					<section class="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<section id="information" class="mt-4 flex flex-col gap-4">
 							<table>
 								<tr>
@@ -139,7 +153,24 @@ if (Astro.request.method === "POST") {
 								</tr>
 								<tr>
 									<td
-										class="border border-black p-2 text-center font-semibold font-mono capitalize"
+										class:list={[
+											"border border-black p-2 text-center font-semibold font-mono capitalize",
+											{
+												"bg-red-400":
+													response.body.bmiConclusion ===
+														"Bobot Terlalu Rendah" ||
+													response.body.bmiConclusion === "Obesitas Kelas 2",
+												"bg-red-200":
+													response.body.bmiConclusion ===
+														"Sangat Kurang Bobot" ||
+													response.body.bmiConclusion === "Obesitas Kelas 1",
+												"bg-yellow-200":
+													response.body.bmiConclusion === "Kurang Bobot" ||
+													response.body.bmiConclusion === "Kelebihan Bobot",
+												"bg-green-200":
+													response.body.bmiConclusion === "Normal",
+											},
+										]}
 										colspan="2"
 									>
 										{response.body.bmiConclusion}
@@ -174,12 +205,42 @@ if (Astro.request.method === "POST") {
 									<td class="border border-black p-2 text-center font-semibold font-mono">
 										{response.body.weightInfo.max} kg
 									</td>
-									<td class="border border-black p-2 text-center font-semibold font-mono">
-										{Number(response.body.weightInfo.deltaFromIdeal) > 0
-											? "Turun"
-											: "Naik"}
-										{Math.abs(Number(response.body.weightInfo.deltaFromIdeal))}{" "}
-										kg
+									<td
+										class:list={[
+											"border border-black p-2 text-center font-semibold font-mono",
+											{
+												"bg-green-200":
+													Math.round(
+														Number(response.body.weightInfo.deltaFromIdeal),
+													) === 0,
+												"bg-yellow-200":
+													((Number(response.body.weightInfo.deltaFromIdeal) >=
+														-8 &&
+														Number(response.body.weightInfo.deltaFromIdeal) <=
+															8) ||
+														(Number(response.body.weightInfo.deltaFromIdeal) <=
+															8 &&
+															Number(response.body.weightInfo.deltaFromIdeal) >=
+																-8)) &&
+													Math.round(
+														Number(response.body.weightInfo.deltaFromIdeal),
+													) !== 0,
+												"bg-red-200":
+													(Number(response.body.weightInfo.deltaFromIdeal) <=
+														-9 ||
+														Number(response.body.weightInfo.deltaFromIdeal) >=
+															9) &&
+													Math.round(
+														Number(response.body.weightInfo.deltaFromIdeal),
+													) !== 0,
+											},
+										]}
+									>
+										{Number(response.body.weightInfo.deltaFromIdeal) === 0
+											? "Ideal"
+											: Number(response.body.weightInfo.deltaFromIdeal) > 0
+												? `Turun ${Math.abs(Number(response.body.weightInfo.deltaFromIdeal))} kg`
+												: `Naik ${Math.abs(Number(response.body.weightInfo.deltaFromIdeal))} kg`}
 									</td>
 								</tr>
 								<tr>
@@ -193,7 +254,9 @@ if (Astro.request.method === "POST") {
 										colspan="2"
 										class="border border-black p-2 text-center font-semibold font-mono"
 									>
-										{response.body.dietDuration} Bulan
+										{Number(response.body.dietDuration) === 0
+											? "-"
+											: `± ${response.body.dietDuration} Bulan`}
 									</td>
 								</tr>
 								<tr>
