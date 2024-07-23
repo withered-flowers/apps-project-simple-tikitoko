@@ -5,8 +5,12 @@ import {
 } from "../types";
 import {
 	calculateBMI,
-	calculateBMR,
+	calculateBMRHarrisBenedict,
+	calculateDeltaWeightFromIdeal,
+	calculateDietDuration,
 	calculateTDEE,
+	calculateWaterIntake,
+	calculateWeight,
 	interpretBMI,
 } from "../utils";
 
@@ -21,6 +25,7 @@ export const processResponse = async (
 		jenisKelamin: data.get("jenisKelamin"),
 		tinggi: Number(data.get("tinggi")),
 		berat: Number(data.get("berat")),
+		aktivitas: data.get("aktivitas"),
 	};
 
 	// Validasi Input
@@ -37,17 +42,35 @@ export const processResponse = async (
 	}
 
 	// Hitung BMR dan BMI
-	const bmr = Math.ceil(
-		calculateBMR(
+	const bmr = Math.round(
+		calculateBMRHarrisBenedict(
 			result.data.berat,
 			result.data.tinggi,
 			result.data.usia,
 			result.data.jenisKelamin,
 		),
 	);
+
 	const bmi = calculateBMI(result.data.berat, result.data.tinggi);
 	const interpretBMIResult = interpretBMI(bmi);
-	const tdde = Math.ceil(calculateTDEE(bmr, ActivityLevel.Sedentary));
+	const tdee = Math.round(
+		calculateTDEE(bmr, ActivityLevel[result.data.aktivitas]),
+	);
+	const weightInfo = calculateWeight(result.data.tinggi);
+	const deltaWeightInfo = calculateDeltaWeightFromIdeal(
+		result.data.tinggi,
+		result.data.berat,
+	);
+	const waterIntake = calculateWaterIntake(
+		result.data.berat,
+		ActivityLevel.VeryActive,
+	);
+
+	// Underweight: BMR + 500
+	// Overweight: BMR - 300
+	const dailyCalorieIntake = deltaWeightInfo < 0 ? bmr + 500 : bmr - 300;
+
+	const dietDuration = calculateDietDuration(deltaWeightInfo);
 
 	return {
 		status: 200,
@@ -59,7 +82,16 @@ export const processResponse = async (
 			bmr: bmr.toString(),
 			bmi: bmi.toFixed(2),
 			bmiConclusion: interpretBMIResult,
-			tdee: tdde.toString(),
+			tdee: tdee.toString(),
+			dailyCalorieIntake: dailyCalorieIntake.toString(),
+			weightInfo: {
+				min: Math.round(weightInfo.min).toString(),
+				max: Math.round(weightInfo.max).toString(),
+				ideal: Math.round(weightInfo.ideal).toString(),
+				deltaFromIdeal: deltaWeightInfo.toString(),
+			},
+			dietDuration: dietDuration.toString(),
+			waterIntake: waterIntake.toFixed(1),
 		},
 	};
 };

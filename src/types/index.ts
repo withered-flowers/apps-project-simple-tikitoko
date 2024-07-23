@@ -10,11 +10,25 @@ export enum ActivityLevel {
 	ExtremelyActive = 1.9,
 }
 
+export type WeightInfoType = {
+	min: string;
+	max: string;
+	ideal: string;
+	deltaFromIdeal: string;
+};
+
 export const FormInputSchema = z.object({
 	nama: z.string(),
 	usia: z.number(),
 	jenisKelamin: z.enum(["M", "F"]),
 	tinggi: z.number(),
+	aktivitas: z.enum([
+		"Sedentary",
+		"LightlyActive",
+		"ModeratelyActive",
+		"VeryActive",
+		"ExtremelyActive",
+	]),
 	berat: z.number(),
 });
 
@@ -24,7 +38,11 @@ export type FormResponseBodyType = FormInputSchemaType & {
 	bmr: string;
 	bmi: string;
 	bmiConclusion: string;
+	dailyCalorieIntake: string;
+	dietDuration: string;
 	tdee: string;
+	weightInfo: WeightInfoType;
+	waterIntake: string;
 };
 
 export type FormResponseType = {

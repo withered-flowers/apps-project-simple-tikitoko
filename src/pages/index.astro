@@ -45,6 +45,7 @@ if (Astro.request.method === "POST") {
 				class="border rounded p-2 w-full mt-2"
 			/>
 			<select name="jenisKelamin" class="border rounded p-2 w-full mt-2">
+				<option value="" selected disabled>Jenis Kelamin</option>
 				<option value="M">Laki-Laki</option>
 				<option value="F">Perempuan</option>
 			</select>
@@ -60,6 +61,14 @@ if (Astro.request.method === "POST") {
 				placeholder="Berat Kamu (kg)"
 				class="border rounded p-2 w-full mt-2"
 			/>
+			<select name="aktivitas" class="border rounded p-2 w-full mt-2">
+				<option value="" selected disabled>Aktivitas Fisik</option>
+				<option value="Sedentary">Sangat Jarang Olahraga</option>
+				<option value="LightlyActive">Jarang Olahraga</option>
+				<option value="ModeratelyActive">Normal Olahraga</option>
+				<option value="VeryActive">Sering Olahraga</option>
+				<option value="ExtremelyActive">Sangat Sering Olahraga</option>
+			</select>
 			<button
 				type="submit"
 				class="bg-[#85c7de] hover:bg-[#77939b] text-slate-700 hover:text-white/80 transition-all duration-300 rounded p-2 mt-2 w-full"
@@ -70,73 +79,141 @@ if (Astro.request.method === "POST") {
 
 		{
 			response && typeof response.body === "object" && (
-				<section
-					id="information"
-					class="mt-4 flex flex-col gap-4 w-full md:w-1/2 lg:w-1/3"
-				>
+				<>
 					<p class="font-semibold text-xl">Data yang kamu masukkan:</p>
-					<table>
-						<tr>
-							<td class="border border-black p-2">Nama</td>
-							<td class="border border-black p-2 text-center font-semibold font-mono">
-								{response.body.nama}
-							</td>
-						</tr>
-						<tr>
-							<td class="border border-black p-2">Usia</td>
-							<td class="border border-black p-2 text-center font-semibold font-mono">
-								{response.body.usia}
-							</td>
-						</tr>
-						<tr>
-							<td class="border border-black p-2">LK / PR</td>
-							<td class="border border-black p-2 text-center font-semibold font-mono">
-								{response.body.jenisKelamin}
-							</td>
-						</tr>
-						<tr>
-							<td class="border border-black p-2">Tinggi</td>
-							<td class="border border-black p-2 text-center font-semibold font-mono">
-								{response.body.tinggi}
-							</td>
-						</tr>
-						<tr>
-							<td class="border border-black p-2">Berat</td>
-							<td class="border border-black p-2 text-center font-semibold font-mono">
-								{response.body.berat}
-							</td>
-						</tr>
-						<tr>
-							<td class="p-2" />
-						</tr>
-						<tr>
-							<td class="border border-black p-2">BMR Anda</td>
-							<td class="border border-black p-2 text-center font-semibold font-mono">
-								{response.body.bmr}
-							</td>
-						</tr>
-						<tr>
-							<td class="border border-black p-2">IMT Anda</td>
-							<td class="border border-black p-2 text-center font-semibold font-mono">
-								{response.body.bmi}
-							</td>
-						</tr>
-						<tr>
-							<td
-								class="border border-black p-2 text-center font-semibold font-mono capitalize"
-								colspan="2"
-							>
-								{response.body.bmiConclusion}
-							</td>
-						</tr>
-						<tr>
-							<td class="border border-black p-2">Saran Kalori Harian</td>
-							<td class="border border-black p-2 text-center font-semibold font-mono">
-								{response.body.tdee}
-							</td>
-						</tr>
-					</table>
-				</section>
+					<section class="mt-4 grid grid-cols-2 gap-4">
+						<section id="information" class="mt-4 flex flex-col gap-4">
+							<table>
+								<tr>
+									<td class="border border-black p-2">Nama</td>
+									<td class="border border-black p-2 text-center font-semibold font-mono">
+										{response.body.nama}
+									</td>
+								</tr>
+								<tr>
+									<td class="border border-black p-2">Usia</td>
+									<td class="border border-black p-2 text-center font-semibold font-mono">
+										{response.body.usia} thn
+									</td>
+								</tr>
+								<tr>
+									<td class="border border-black p-2">LK / PR</td>
+									<td class="border border-black p-2 text-center font-semibold font-mono">
+										{response.body.jenisKelamin === "M"
+											? "Laki-Laki"
+											: "Perempuan"}
+									</td>
+								</tr>
+								<tr>
+									<td class="border border-black p-2">Tinggi</td>
+									<td class="border border-black p-2 text-center font-semibold font-mono">
+										{response.body.tinggi} cm
+									</td>
+								</tr>
+								<tr>
+									<td class="border border-black p-2">Berat</td>
+									<td class="border border-black p-2 text-center font-semibold font-mono">
+										{response.body.berat} kg
+									</td>
+								</tr>
+								<tr>
+									<td class="p-2" />
+								</tr>
+								<tr>
+									<td class="border border-black p-2">BMR Anda</td>
+									<td class="border border-black p-2 text-center font-semibold font-mono">
+										{response.body.bmr}
+									</td>
+								</tr>
+								<tr>
+									<td class="border border-black p-2">TDEE Anda</td>
+									<td class="border border-black p-2 text-center font-semibold font-mono">
+										{response.body.tdee}
+									</td>
+									<tr>
+										<td class="border border-black p-2">IMT Anda</td>
+										<td class="border border-black p-2 text-center font-semibold font-mono">
+											{response.body.bmi}
+										</td>
+									</tr>
+								</tr>
+								<tr>
+									<td
+										class="border border-black p-2 text-center font-semibold font-mono capitalize"
+										colspan="2"
+									>
+										{response.body.bmiConclusion}
+									</td>
+								</tr>
+								<tr>
+									<td class="border border-black p-2">Saran Kalori Harian</td>
+									<td class="border border-black p-2 text-center font-semibold font-mono">
+										{response.body.dailyCalorieIntake} kkal
+									</td>
+								</tr>
+							</table>
+						</section>
+
+						<section id="information-2" class="mt-4 flex flex-col gap-4">
+							<table>
+								<tr>
+									<td class="border border-black p-2 text-center">Min</td>
+									<td class="border border-black p-2 text-center">Ideal</td>
+									<td class="border border-black p-2 text-center">Max</td>
+									<td class="border border-black p-2 text-center">
+										Turun / Naik
+									</td>
+								</tr>
+								<tr>
+									<td class="border border-black p-2 text-center font-semibold font-mono">
+										{response.body.weightInfo.min} kg
+									</td>
+									<td class="border border-black p-2 text-center font-semibold font-mono">
+										{response.body.weightInfo.ideal} kg
+									</td>
+									<td class="border border-black p-2 text-center font-semibold font-mono">
+										{response.body.weightInfo.max} kg
+									</td>
+									<td class="border border-black p-2 text-center font-semibold font-mono">
+										{Number(response.body.weightInfo.deltaFromIdeal) > 0
+											? "Turun"
+											: "Naik"}
+										{Math.abs(Number(response.body.weightInfo.deltaFromIdeal))}{" "}
+										kg
+									</td>
+								</tr>
+								<tr>
+									<td
+										colspan="2"
+										class="border border-black p-2 text-center font-semibold font-mono"
+									>
+										Dalam Waktu
+									</td>
+									<td
+										colspan="2"
+										class="border border-black p-2 text-center font-semibold font-mono"
+									>
+										{response.body.dietDuration} Bulan
+									</td>
+								</tr>
+								<tr>
+									<td
+										colspan="2"
+										class="border border-black p-2 text-center font-semibold font-mono"
+									>
+										Air Putih 1 Hari
+									</td>
+									<td
+										colspan="2"
+										class="border border-black p-2 text-center font-semibold font-mono"
+									>
+										{response.body.waterIntake} Liter
+									</td>
+								</tr>
+							</table>
+						</section>
+					</section>
+				</>
 			)
 		}
 	</main>
